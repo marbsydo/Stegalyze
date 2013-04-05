@@ -26,9 +26,16 @@ import sys
 import random as rnd
 from PIL import Image
 from optparse import OptionParser
+from time import time
 
 #---Globals-------------------------------------------------------------
 debug = False
+showProgress = True
+
+#---IO------------------------------------------------------------------
+
+def clear():
+	os.system(['clear', 'cls'][os.name == 'nt'])
 
 #---Functions-----------------------------------------------------------
 def random_encode_data(image, data):
@@ -235,13 +242,37 @@ def dictionary_attack(image):
 	keys = sorted(words, key=len);
 	msg_len = 0
 	bestkey = ""
-	
+
+	keys_pos = 0
+	keys_max = len(keys)
+	time_start = time()
+
 	for k in keys:
+		if showProgress and keys_pos % 100 == 0:
+			percentage = keys_pos / float(keys_max)
+			time_elapsed = time() - time_start
+			if percentage > 0.001:
+				time_total_estimate = int(time_elapsed / percentage)
+				time_remaining = time_total_estimate - time_elapsed
+				minutes_remaining = int(time_remaining / 60)
+				seconds_remaining = time_remaining - (minutes_remaining * 60)
+				time_remaining_string = '%2dm%2ds remaining' % (minutes_remaining, seconds_remaining)
+			else:
+				time_remaining_string = 'calculating remaining time...'
+			print k.ljust(30) + ' | %.2f%% | ' % (percentage * 100) + time_remaining_string
+		keys_pos += 1
+
 		text = ''.join(random_decode_data(image.getdata(), k, True))
 		if len(text) > msg_len:
 			msg_len = len(text)
 			bestkey = k
 	
+	if showProgress:
+		time_total = time() - time_start
+		minutes_total = int(time_total / 60)
+		seconds_total = time_total - (minutes_total * 60)
+		print 'Completed after %2dm%2ds' % (minutes_total, seconds_total)
+
 	return bestkey
 
 def vigenere(key, data, mode):
@@ -300,7 +331,7 @@ def vigenere(key, data, mode):
 		return plaintext
         
 def runInteractive():
-    os.system('clear')
+    clear()
     while True:
         print "---Stegalyze Menu-----------------------------------------------------"
         print "\t1. Encode"
@@ -411,7 +442,7 @@ def runInteractive():
             break
         else:
             print 'Invalid Option'
-    os.system('clear')
+    clear()
     
 def addParserOptions(parser):
     parser.add_option("-e", "--encode",
