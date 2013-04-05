@@ -37,6 +37,10 @@ showProgress = True
 def clear():
 	os.system(['clear', 'cls'][os.name == 'nt'])
 
+def writeMessageToFile(fileName, msg):
+	with open(fileName, 'w') as f:
+		f.write(msg)
+
 #---Functions-----------------------------------------------------------
 def random_encode_data(image, data):
     datalen = len(data)
@@ -245,7 +249,12 @@ def dictionary_attack(image):
 
 	keys_pos = 0
 	keys_max = len(keys)
+	longest_word_length = max(len(k) for k in keys)
 	time_start = time()
+
+	clear()
+	print 'Word'.ljust(longest_word_length) + ' | Progress | Time Remaining'
+	print '-' * longest_word_length + '-+----------+-----------------'
 
 	for k in keys:
 		if showProgress and keys_pos % 100 == 0:
@@ -258,8 +267,8 @@ def dictionary_attack(image):
 				seconds_remaining = time_remaining - (minutes_remaining * 60)
 				time_remaining_string = '%2dm%2ds remaining' % (minutes_remaining, seconds_remaining)
 			else:
-				time_remaining_string = 'calculating remaining time...'
-			print k.ljust(30) + ' | %.2f%% | ' % (percentage * 100) + time_remaining_string
+				time_remaining_string = 'calculating...'
+			print k.ljust(longest_word_length) + ' | %2.2f%%    | ' % (percentage * 100) + time_remaining_string
 		keys_pos += 1
 
 		text = ''.join(random_decode_data(image.getdata(), k, True))
@@ -432,9 +441,13 @@ def runInteractive():
                         print "The key could not be found."
                     else:
                         print "The key appears to be '" + guessedKey + "'"
-                        print "The message is:\n" + decode(imgFile, guessedKey)
+                        #print "The message is:\n" + decode(imgFile, guessedKey)
+                        print "Outputted decoded message to msg.txt"
+                        writeMessageToFile('msg.txt', decode(imgFile, guessedKey))
                 else:
-                    print "The message is:\n" + decode(imgFile, '')
+                    #print "The message is:\n" + decode(imgFile, '')
+                    print "Outputted decoded message to msg.txt"
+                    writeMessageToFile('msg.txt', decode(imgFile, guessedKey))
         elif menuOption == 4:
             debug = not debug
             print 'Debug Mode is now ' + ('On' if debug else 'Off')
