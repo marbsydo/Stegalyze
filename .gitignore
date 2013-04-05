@@ -1,8 +1,4 @@
 .DS_Store
-<<<<<<< HEAD
 *.png
 *.txt
 *.jpg
-=======
-*.png
->>>>>>> parent of 702b799... Outputs to individual files
