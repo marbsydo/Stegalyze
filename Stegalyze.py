@@ -441,13 +441,11 @@ def runInteractive():
                         print "The key could not be found."
                     else:
                         print "The key appears to be '" + guessedKey + "'"
-                        #print "The message is:\n" + decode(imgFile, guessedKey)
-                        print "Outputted decoded message to msg.txt"
-                        writeMessageToFile('msg.txt', decode(imgFile, guessedKey))
+                        print "Outputted decoded message to " + encodedImgFilename + ".txt"
+                        writeMessageToFile(encodedImgFilename + '.txt', decode(imgFile, guessedKey))
                 else:
-                    #print "The message is:\n" + decode(imgFile, '')
-                    print "Outputted decoded message to msg.txt"
-                    writeMessageToFile('msg.txt', decode(imgFile, guessedKey))
+                    print "Outputted decoded message to " + encodedImgFilename + ".txt"
+                    writeMessageToFile(encodedImgFilename + '.txt', decode(imgFile, ''))
         elif menuOption == 4:
             debug = not debug
             print 'Debug Mode is now ' + ('On' if debug else 'Off')
